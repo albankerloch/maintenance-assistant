@@ -1,4 +1,4 @@
-Dans Google Cloud, créer une Fonctions Cloud Run :
+Dans Google Cloud, créer une Cloud Run Fonction :
 - Mémoire allouée : 512 Mo (au lieu de 256 Mo)
 - Choisir l'environnement d'exécution (Python 3.12)
     - main.py : contenu du fichier 
