@@ -1,0 +1,22 @@
+# openapi2-functions.yaml
+swagger: '2.0'
+info:
+  title: api-poc-edf
+  description: API on API Gateway with a Google Cloud Functions
+  version: 1.0.0
+schemes:
+  - https
+produces:
+  - application/json
+paths:
+  /prompt:
+    get:
+      summary: ask gemini
+      operationId: prompt
+      x-google-backend:
+        address: https://europe-west1-poc-chatbot-edf.cloudfunctions.net/simple-gemini-function
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
