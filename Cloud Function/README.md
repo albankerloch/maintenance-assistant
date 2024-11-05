@@ -6,5 +6,5 @@ Dans Google Cloud, créer une Cloud Run Fonction :
 - Déployer
 
 Tester avec :
-    - curl -m 70 -X POST https://europe-west1-poc-chatbot-edf.cloudfunctions.net/simple-gemini-function -H "Content-Type: application/json" -d '{"prompt": "Who is Albert Einstein?"}'
-    - POSTMAN : compte alban.kerloch@gmail.com => Google Cloud => Cloud Function => simple-gemini-function
+- curl -m 70 -X POST https://europe-west1-poc-chatbot-edf.cloudfunctions.net/simple-gemini-function -H "Content-Type: application/json" -d '{"prompt": "Who is Albert Einstein?"}'
+- POSTMAN : compte alban.kerloch@gmail.com => Google Cloud => Cloud Function => simple-gemini-function
