@@ -7,7 +7,7 @@ import base64
 from google.cloud import logging
 from vertexai.preview.generative_models import GenerativeModel, Part
 
-PROJECT_ID = "poc-chatbot-edf"
+PROJECT_ID = "test-chatbot-edf"
 LOCATION = "europe-west1"
 
 client = logging.Client(project=PROJECT_ID)
@@ -15,6 +15,10 @@ client.setup_logging()
 
 LOG_NAME = "run_inference-cloudfunction-log"
 logger = client.logger(LOG_NAME)
+
+storage_client = storage.Client()
+BUCKET_NAME = "bucket-test-chatbot-edf"
+bucket = storage_client.bucket(bucket_name)
 
 @functions_framework.http
 def run_inference(request):
