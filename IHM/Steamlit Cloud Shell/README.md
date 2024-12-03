@@ -6,8 +6,11 @@ Dans Google Cloud Cloud shell :
 
 - Lancer les commandes suivantes :
 python3 -m venv .venv
+
 source .venv/bin/activate
+
 pip install -r requirements.txt
+
 streamlit run app.py \
   --browser.serverAddress=localhost \
   --server.enableCORS=false \
