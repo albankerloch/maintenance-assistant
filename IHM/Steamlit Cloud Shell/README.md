@@ -5,13 +5,14 @@ Dans Google Cloud Cloud shell :
     - streamlit_app.py
 
 - Lancer les commandes suivantes :
+
 python3 -m venv .venv
 
 source .venv/bin/activate
 
 pip install -r requirements.txt
 
-streamlit run app.py \
+streamlit run streamlit_app.py \
   --browser.serverAddress=localhost \
   --server.enableCORS=false \
   --server.enableXsrfProtection=false \
