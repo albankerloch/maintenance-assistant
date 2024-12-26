@@ -16,7 +16,12 @@ if 'uploaded_file' not in st.session_state:
 if 'upload_mode' not in st.session_state:
     st.session_state['upload_mode'] = False
 
-def call_gemini_api(prompt, image):
+def call_gemini_text(prompt):
+    response = model.generate_content(prompt)
+    rep = response.candidates[0].content.parts[0].text
+    return rep
+
+def call_gemini_image(prompt, image):
     response = model.generate_content([prompt, image[0], prompt])
     rep = response.candidates[0].content.parts[0].text
     return rep
@@ -28,11 +33,11 @@ btn_audio = st.button("Audio")
 btn_photo = st.button("Ajouter une photo")
 
 if btn_photo:
-        if st.session_state['uploaded_file'] is not None:
-            st.session_state['uploaded_file'] = None
-            st.session_state['upload_mode'] = False
-        else:
-            st.session_state['upload_mode'] = not st.session_state['upload_mode']
+    if st.session_state['uploaded_file'] is not None:
+        st.session_state['uploaded_file'] = None
+        st.session_state['upload_mode'] = False
+    else:
+        st.session_state['upload_mode'] = not st.session_state['upload_mode']
 
 if st.session_state['upload_mode'] and st.session_state['uploaded_file'] is None:
     uploaded = st.file_uploader("Choisissez une image...", type=["jpg", "jpeg", "png"])
@@ -61,9 +66,11 @@ def input_image_setup(uploaded_file):
         raise FileNotFoundError("No file uploaded")
 
 if btn and user_quest:
-    image_data = input_image_setup(st.session_state['uploaded_file'])
-    result = call_gemini_api(user_quest, image_data)
-    st.write("Response from Gemini API:")
+    if st.session_state['uploaded_file'] is not None:
+        image_data = input_image_setup(st.session_state['uploaded_file'])
+        result = call_gemini_image(user_quest, image_data)
+    else:
+        result = call_gemini_text(user_quest)
     st.write(result)
 
 
