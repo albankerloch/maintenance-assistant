@@ -8,7 +8,7 @@ Dans Google Cloud Cloud shell :
 
 python3 -m venv .venv
 
-source .venv/bin/activate
+source .venv/bin/activate (ou .venv\Scripts\activate sur Windows)
 
 pip install -r requirements.txt
 
