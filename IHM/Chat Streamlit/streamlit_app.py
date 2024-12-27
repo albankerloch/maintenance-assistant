@@ -81,19 +81,7 @@ if st.session_state['uploaded_file'] is not None:
         st.session_state['upload_mode'] = False
     if st.session_state['uploaded_file'] is not None:
         img = Image.open(st.session_state['uploaded_file'])
-        st.image(img, caption='Image à envoyer', use_container_width =False, width=100)
-
-user_quest = st.text_input("Saisir votre question :")
-
-btn = st.button("Demander")
-
-if btn and user_quest:
-    if st.session_state['uploaded_file'] is not None:
-        image_data = input_image_setup(st.session_state['uploaded_file'])
-        result = call_gemini_image(user_quest, image_data)
-    else:
-        result = call_gemini_text(user_quest)
-    st.write(result)
+        st.image(img, caption='Image à envoyer', width=100)
 
 for msg in st.session_state.chat_session.history:
     with st.chat_message(map_role(msg["role"])):
@@ -103,8 +91,12 @@ user_input = st.chat_input("Demander à Gemini ...")
 
 if user_input:
     st.chat_message("user").markdown(user_input)
-    gemini_response = fetch_gemini_response(user_input)
+    if st.session_state['uploaded_file'] is not None:
+        image_data = input_image_setup(st.session_state['uploaded_file'])
+        result = call_gemini_image(user_input, image_data)
+    else:
+        result = call_gemini_text(user_input)
     with st.chat_message("assistant"):
-        st.markdown(gemini_response)
+        st.markdown(result)
     st.session_state.chat_session.history.append({"role": "user", "content": user_input})
-    st.session_state.chat_session.history.append({"role": "model", "content": gemini_response})
+    st.session_state.chat_session.history.append({"role": "model", "content": result})
