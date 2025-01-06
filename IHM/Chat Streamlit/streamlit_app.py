@@ -4,21 +4,22 @@ from dotenv import load_dotenv
 from PIL import Image
 import base64
 import os
+import speech_recognition as sr
  
  
 load_dotenv()
 API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=API_KEY)
-
+ 
 MODEL_ROLE = 'ai'
 AI_AVATAR_ICON = '✨'
-
+ 
 # Initialisation de l'état de session pour l'historique
 if 'messages' not in st.session_state:
     st.session_state.messages = []
 if 'gemini_history' not in st.session_state:
     st.session_state.gemini_history = []
-
+ 
 # Configuration du modèle et du chat
 st.session_state.model = genai.GenerativeModel('gemini-1.5-flash')
 st.session_state.chat_session = st.session_state.model.start_chat(
@@ -36,7 +37,7 @@ def call_gemini_text(prompt: str) -> str:
 def call_gemini_image(prompt: str, image):
     """
     Appel à Gemini pour un prompt texte et une image.
-    """ 
+    """
     response = st.session_state.chat_session.send_message([prompt, image[0], prompt])
     return response.parts[0].text
  
@@ -48,6 +49,44 @@ def input_image_setup(uploaded_file):
     else:
         raise FileNotFoundError("No file uploaded")
  
+ 
+def record_audio():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Parlez maintenant...")
+        try:
+            audio = r.listen(source, phrase_time_limit=5)  # time limit ( 5 seconds)
+        except sr.WaitTimeoutError:
+            print("Votre voix n'a pas été détecté à temps, veuillez réessayer!")
+            return None
+        except Exception as e:
+            print(f"Une erreur a été detecté, Veuillez réessayer : {e}")
+            return None
+    try:
+        text = r.recognize_google(audio, language="fr-FR")
+        print("Vous avez dit : " + text)
+        return text
+    except sr.UnknownValueError:
+        print("L'audio n'a pas été pris en compte")
+        return None
+    except sr.RequestError as e:
+        print(f"La requête ne s'est pas effectué; {e}")
+        return None
+ 
+# Microphone Button Click
+def microphone_button_clicked():
+  st.session_state['microphone_active'] = not st.session_state['microphone_active']
+  if st.session_state['microphone_active']:
+    user_prompt = record_audio()
+    if user_prompt:
+      st.session_state["messages"].append({"role": "user", "content": user_prompt})
+      bot_response = call_gemini_text(user_prompt)
+      st.session_state["messages"].append({"role": "bot", "content": bot_response})
+      st.session_state.gemini_history = st.session_state.chat_session.history
+    else:
+      st.error("Could not understand audio, please try again.")
+  else:
+    st.success("Microphone is OFF")
  
 def get_image_base64(image_path):
     with open(image_path, "rb") as image_file:
@@ -89,7 +128,7 @@ col1, col2, col3 = st.columns([0.07, 0.9, 0.1], gap="small")
 with col1:
     if st.button(
         "",
-        on_click=toggle_microphone,
+        on_click=microphone_button_clicked,
         icon=":material/mic:" if st.session_state.get('microphone_active') else ":material/mic_off:"
     ):
         if st.session_state['microphone_active']:
@@ -206,5 +245,4 @@ for message in st.session_state['messages']:
                 f"margin-right: 250px; margin-bottom: 20px'>{message['content']}</div>",
                 unsafe_allow_html=True,
             )
- 
  
